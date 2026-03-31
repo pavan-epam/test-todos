@@ -10,10 +10,8 @@ pipeline {
                 } 
             }
             steps {
-                // Navigate into the backend directory
                 dir('backend') {
                     sh 'pip install --no-cache-dir -r requirements.txt'
-                    // In a real scenario, you run pytest here
                     sh 'python -m py_compile app.py' 
                     echo "Backend compilation verified."
                 }
@@ -22,13 +20,15 @@ pipeline {
         
         stage('Frontend: Build Artifacts') {
             agent { 
-                docker { image 'node:20-alpine' args '-u root' } 
+                docker { 
+                    image 'node:20-alpine'
+                    args '-u root' 
+                } 
             }
             steps {
                 dir('frontend') {
-                    
                     sh 'npm install'
-                    sh 'npm run build' // This creates the 'dist' folder
+                    sh 'npm run build' 
                 }
             }
         }
@@ -36,11 +36,17 @@ pipeline {
         stage('Publish Artifacts') {
             agent any
             steps {
-                // This is the answer to "where is my app"
-                // This saves the frontend build output directly into Jenkins UI
+                // This saves the 'dist' folder to the Jenkins Master
                 archiveArtifacts artifacts: 'frontend/dist/**', allowEmptyArchive: false
-                echo "React build saved. You can download it from the Jenkins Build page."
+                echo "Success! You can find your compiled React files in the Artifacts section of this build."
             }
+        }
+    }
+    
+    post {
+        always {
+            // Good practice to clean up the workspace on the EC2 host
+            cleanWs()
         }
     }
 }
