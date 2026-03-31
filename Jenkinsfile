@@ -68,5 +68,22 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy to Kubernetes (CD)') {
+            agent any // Runs on the host so it can access the minikube cluster
+            steps {
+                echo "Deploying applications to Minikube..."
+                
+                // Apply the backend and frontend manifests
+                sh "kubectl apply -f k8s/backend.yaml"
+                sh "kubectl apply -f k8s/frontend.yaml"
+                
+                // Force a restart so K8s pulls the absolute latest image from DockerHub
+                sh "kubectl rollout restart deployment/backend-deploy"
+                sh "kubectl rollout restart deployment/frontend-deploy"
+                
+                echo "Deployment triggered successfully!"
+            }
+        }
     }
 }
