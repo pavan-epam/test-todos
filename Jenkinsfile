@@ -22,7 +22,7 @@ pipeline {
         
         stage('Frontend: Build Artifacts') {
             agent { 
-                docker { image 'node:20-alpine' } 
+                docker { image 'node:20-alpine' args '-u root' } 
             }
             steps {
                 dir('frontend') {
