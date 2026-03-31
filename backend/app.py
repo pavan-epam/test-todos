@@ -9,7 +9,7 @@ todos = [
     {"id": 1, "task": "Understand Jenkins architecture"},
     {"id": 2, "task": "Build React app"},
     {"id": 3, "task": "Deploy artifacts"},
-    {"id": 4, "task": "Build Docker Image!!"}
+    {"id": 4, "task": "Build Docker Image!!"},
 ]
 
 @app.route('/api/v1/get-todos', methods=['GET'])
