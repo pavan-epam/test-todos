@@ -42,13 +42,4 @@ pipeline {
             }
         }
     }
-    
-    post {
-        always {
-            // Allocates a node context to safely execute the cleanup
-            node {
-                cleanWs()
-            }
-        }
-    }
 }
