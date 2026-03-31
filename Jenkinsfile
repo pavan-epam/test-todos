@@ -44,9 +44,12 @@ pipeline {
     }
     
     post {
-        always {
-            // Good practice to clean up the workspace on the EC2 host
-            cleanWs()
+            always {
+                // Allocates a node context to safely execute the cleanup
+                node {
+                    cleanWs()
+                }
+            }
         }
     }
 }
