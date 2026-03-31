@@ -4,12 +4,15 @@ pipeline {
     stages {
         stage('Backend: Test & Verify') {
             agent { 
-                docker { image 'python:3.11-alpine' } 
+                docker { 
+                    image 'python:3.11-alpine'
+                    args '-u root'
+                } 
             }
             steps {
                 // Navigate into the backend directory
                 dir('backend') {
-                    sh 'pip install -r requirements.txt'
+                    sh 'pip install --no-cache-dir -r requirements.txt'
                     // In a real scenario, you run pytest here
                     sh 'python -m py_compile app.py' 
                     echo "Backend compilation verified."
@@ -23,6 +26,7 @@ pipeline {
             }
             steps {
                 dir('frontend') {
+                    
                     sh 'npm install'
                     sh 'npm run build' // This creates the 'dist' folder
                 }
