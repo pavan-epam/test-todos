@@ -15,7 +15,7 @@ spec:
       containers:
       - name: backend
         # REPLACE with your actual DockerHub username!
-        image: your_dockerhub_username/test-todos-backend:latest
+        image: pavanepam/test-todos-backend:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
