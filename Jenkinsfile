@@ -42,7 +42,7 @@ pipeline {
             }
             environment {
                 // REPLACE with the IP of your new SonarQube EC2 instance
-                SONAR_HOST_URL = 'http://98.89.30.219:9000'
+                SONAR_HOST_URL = 'http://13.218.141.166:9000'
             }
             steps {
                 // Pulls the token you saved in Jenkins Credentials
