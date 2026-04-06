@@ -32,6 +32,33 @@ pipeline {
             }
         }
 
+        // --- NEW SONARQUBE STAGE ---
+        stage('SonarQube Code Analysis') {
+            agent {
+                docker { 
+                    image 'sonarsource/sonar-scanner-cli:latest'
+                    args '-u root'
+                }
+            }
+            environment {
+                // REPLACE with the IP of your new SonarQube EC2 instance
+                SONAR_HOST_URL = 'http://54.242.157.218:9000'
+            }
+            steps {
+                // Pulls the token you saved in Jenkins Credentials
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    sh '''
+                        sonar-scanner \
+                        -Dsonar.projectKey=test-todos \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=${SONAR_HOST_URL} \
+                        -Dsonar.login=${SONAR_TOKEN} \
+                        -Dsonar.exclusions=frontend/node_modules/**,frontend/dist/**
+                    '''
+                }
+            }
+        }
+
         stage('Publish Artifacts to Jenkins') {
             agent any
             steps {
@@ -45,34 +72,33 @@ pipeline {
                 DOCKER_USER = 'pavanepam'
             }
             steps {
-                // Injects the credentials securely
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', passwordVariable: 'DOCKER_PASS', usernameVariable: 'CREDS_USER')]) {
-                    // Login to DockerHub
                     sh "echo \$DOCKER_PASS | docker login -u \$CREDS_USER --password-stdin"
 
-                    // 1. Build and Push Backend
                     dir('backend') {
                         sh "docker build -t ${DOCKER_USER}/test-todos-backend:latest ."
                         sh "docker push ${DOCKER_USER}/test-todos-backend:latest"
                     }
 
-                    // 2. Build and Push Frontend
                     dir('frontend') {
                         sh "docker build -t ${DOCKER_USER}/test-todos-frontend:latest ."
                         sh "docker push ${DOCKER_USER}/test-todos-frontend:latest"
                     }
                     
-                    // Cleanup local images to save EC2 disk space
                     sh "docker rmi ${DOCKER_USER}/test-todos-backend:latest"
                     sh "docker rmi ${DOCKER_USER}/test-todos-frontend:latest"
                 }
             }
         }
 
+        /* =========================================================
+        COMMENTED OUT: Deploy to Kubernetes (CD)
+        We will return to this when the K8s infrastructure is ready.
+        =========================================================
+        
         stage('Deploy to Kubernetes (CD)') {
             agent any 
             environment {
-                // Forces kubectl to use the Minikube cluster config owned by the Jenkins user
                 KUBECONFIG = '/var/lib/jenkins/.kube/config'
             }
             steps {
@@ -87,5 +113,6 @@ pipeline {
                 echo "Deployment triggered successfully!"
             }
         }
+        */
     }
 }
