@@ -6,9 +6,21 @@ on:
 
 jobs:
   stage1:
-    name: build
+    name: "Building!!"
     runs-on: ubuntu-latest
     steps:
       - name: get ubuntu release
         run: uname -r
-        
+  stage2:
+    name: "Testing!!"
+    runs-on: ubuntu-22.04
+    steps:
+      - run: echo "Testing..."
+  
+  stage3:
+    name: "Artifacts!!"
+    runs-on: ubuntu-24.04
+    steps:
+      - run: echo "Artifacts..."
+
+  
