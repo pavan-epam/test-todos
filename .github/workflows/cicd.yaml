@@ -1,0 +1,14 @@
+name: abc
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  stage1:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: get ubuntu release
+        run: uname -r
+        
