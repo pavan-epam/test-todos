@@ -11,16 +11,22 @@ jobs:
     steps:
       - name: get ubuntu release
         run: uname -r
+  
   stage2:
     name: "Testing!!"
+    needs: stage1
     runs-on: ubuntu-22.04
     steps:
       - run: echo "Testing..."
   
   stage3:
+    needs: stage2
     name: "Artifacts!!"
     runs-on: ubuntu-24.04
     steps:
       - run: echo "Artifacts..."
 
-  
+
+
+
+
